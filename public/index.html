@@ -11,7 +11,29 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
   <link rel="stylesheet" href="css/index.css">
+  <style>
+    /* Add this CSS to fix the Material Icons issue */
+    .material-symbols-outlined {
+      font-variation-settings:
+      'FILL' 0,
+      'wght' 400,
+      'GRAD' 0,
+      'opsz' 24
+    }
+    
+    /* Ensure icons have the same styling */
+    .nav-button span, .toggle-btn span, .menu-link span {
+      font-size: 18px;
+      vertical-align: middle;
+    }
+    
+    .fa-brands, .fas {
+      font-size: 16px;
+      vertical-align: middle;
+    }
+  </style>
 </head>
+
 <body>
   <!-- Header Container -->
   <div class="header-container">
@@ -46,18 +68,18 @@
             <div class="menu" id="innerCont">
                 <div class="upperNav">
                     <button class="nav-button" id="onlineTest1"> 
-                        <span class="fa-brands fa-servicestack"> </span>
+                        <i class="fa-brands fa-servicestack"></i>
                         RTS Online
                     </button>
 
                     <button class="nav-button" id="ebookBtn">
-                        <span class="material-symbols-outlined"> auto_stories </span>
+                        <i class="fa-solid fa-book"></i>
                         E-Book
                     </button>
 
                     <div class="certificate">
                         <button class="nav-button" id="certificate">
-                            <span class="material-symbols-outlined">developer_guide</span>  
+                            <i class="fa-solid fa-certificate"></i> 
                             Certificate
                         </button>
                     </div>
@@ -65,11 +87,11 @@
                     <div class="btn-box">
                         <div id="swap-btn"></div>
                         <button class="toggle-btn" id="logInButton">
-                            <span class="material-symbols-outlined"> login </span> 
+                            <i class="fa-solid fa-right-to-bracket"></i> 
                             Login
                         </button>
                         <button class="toggle-btn" id="signUpBtn">
-                            <span class="material-symbols-outlined"> how_to_reg </span>
+                            <i class="fa-solid fa-user-plus"></i>
                             Register
                         </button>
                     </div>
@@ -77,44 +99,44 @@
                 <ul class="lowerNav">
                     <li>
                         <a class="menu-link" href="index.html">
-                            <span class="material-symbols-outlined">home</span>
+                            <i class="fa-solid fa-house"></i>
                             Home
                         </a>
                     </li>
                     <li>
                         <a class="menu-link" href="#">
-                            <span class="material-symbols-outlined">description</span>
+                            <i class="fa-solid fa-file-lines"></i>
                             Research Papers
                         </a>
                     </li>
                     <li>
                         <a class="menu-link" href="#" id="about-link">
-                            <span class="material-symbols-outlined">info</span>
+                            <i class="fa-solid fa-circle-info"></i>
                             About Us
                         </a>
                     </li>
                     <li class="dropdown" id="center-dropdown">
                         <a class="menu-link dropdown-toggle" href="#">
-                            <span class="material-symbols-outlined">hub</span>
+                            <i class="fa-solid fa-hub"></i>
                             Center <i class="fas fa-chevron-down"></i>
                         </a>
                         <div class="dropdown-menu">
                             <ul>
                                 <li>
                                     <a class="nav-link" href="#">
-                                        <span class="material-symbols-outlined">school</span>
+                                        <i class="fa-solid fa-graduation-cap"></i>
                                         Skill Center
                                     </a>
                                 </li>
                                 <li>
                                     <a class="nav-link" href="#">
-                                        <span class="material-symbols-outlined">diversity_3</span>
+                                        <i class="fa-solid fa-people-group"></i>
                                         WIT Center
                                     </a>
                                 </li>
                                 <li>
                                     <a class="nav-link" href="#">
-                                        <span class="material-symbols-outlined">science</span>
+                                        <i class="fa-solid fa-flask"></i>
                                         RID Center
                                     </a>
                                 </li>
@@ -123,7 +145,7 @@
                     </li>
                     <li>
                         <a class="menu-link" href="/contact/contact.html">
-                            <span class="material-symbols-outlined">contact_support</span>
+                            <i class="fa-solid fa-headset"></i>
                             Contact Us
                         </a>
                     </li>

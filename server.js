@@ -1,11 +1,15 @@
+require('dotenv').config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const path = require("path");
 const session = require("express-session");
+const mongoose = require('mongoose');
 const passport = require("passport");
 const dotenv = require("dotenv");
 const connectDB = require("./config/db");
 const cookieParser = require("cookie-parser");
+const helmet = require('helmet');
+const MongoStore = require('connect-mongo');
 const cors = require("cors");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
@@ -19,16 +23,74 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 9191;
 
+
+
+app.use(session({
+    secret: process.env.SESSION_SECRET || 'your-secret-key-change-in-production',
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({
+        mongoUrl: process.env.MONGODB_URI || 'mongodb://localhost:27017/booklibrary',
+        collectionName: 'sessions'
+    }),
+    cookie: {
+        maxAge: 24 * 60 * 60 * 1000,
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production'
+    }
+}));
+
+
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com"],
+            styleSrc: ["'self'", "'unsafe-inline'", "https://api.fontshare.com", "https://cdnjs.cloudflare.com"],
+            fontSrc: ["'self'", "https://api.fontshare.com", "https://cdnjs.cloudflare.com"],
+            imgSrc: ["'self'", "data:", "blob:", "https:"],
+            connectSrc: ["'self'"]
+        }
+    },
+    crossOriginEmbedderPolicy: false
+}));
+
+app.use(cors());
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+
+app.use('/ebook/uploads', express.static(path.join(__dirname, 'public/uploads')));
+
+
+
+
+// ✅ Ensure upload directories exist
+const ensureUploadDirs = () => {
+    const directories = [
+        'public/uploads/pdfs',
+        'public/uploads/covers'
+    ];
+
+    directories.forEach(dir => {
+        const fullPath = path.join(__dirname, dir);
+        if (!fs.existsSync(fullPath)) {
+            fs.mkdirSync(fullPath, { recursive: true });
+            console.log(`✅ Created directory: ${fullPath}`);
+        } else {
+            console.log(`📁 Directory exists: ${fullPath}`);
+        }
+    });
+};
+
+ensureUploadDirs();
 // Database connection
-connectDB();
+
 
 // Middleware configuration
 const configureMiddleware = () => {
   app.use(cors());
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(bodyParser.json());
-  app.use(express.json({ limit: "100mb" }));
-  app.use(express.urlencoded({ limit: "100mb", extended: true }));
   app.use(cookieParser());
   
   app.use(
@@ -56,30 +118,77 @@ const configureMiddleware = () => {
 // View engine setup
 const configureViews = () => {
   app.set("view engine", "ejs");
-  app.set("views", path.join(__dirname, "views"));
+  app.set("views", path.join(__dirname, "views",'ebook'));
   app.use(express.static(path.join(__dirname, "public")));
 };
 
+// Global Variables Middleware
+app.use((req, res, next) => {
+    res.locals.currentPath = req.path;
+    res.locals.success = req.query.success;
+    res.locals.error = req.query.error;
+    res.locals.user = req.session.user || null;
+    res.locals.basePath = '/ebook';
+    next();
+});
+// Initialize security storage
+app.locals.securityEvents = new Map();
+app.locals.pdfTokens = new Map();
+
+
+
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/booklibrary', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+})
+.then(async () => {
+    console.log('✅ MongoDB Connected Successfully');
+    
+    const User = require('./models/EbookUser');
+    await User.createDefaultAdmin();
+})
+.catch(err => {
+    console.error('❌ MongoDB Connection Error:', err);
+    process.exit(1);
+});
+
+
+  app.use('/ebook', require('./routes/pdfRoutes'));
+app.use('/ebook', require('./routes/authebookRoutes'));
 // Route handlers
 const configureRoutes = () => {
   // API Routes
-  const bookRoutes = require("./routes/bookRoutes");
   const organisationRoutes = require("./routes/organisation");
   const userRoutes = require("./routes/userRoutes");
   const authRoutes = require("./routes/authRoutes");
   const adminRoutes = require("./routes/admin");
   const verifyRoutes = require("./routes/verify");
-  const excelRoutes = require("./routes/excelRoutes");
   const authenticateJWT = require("./middleware/authMiddleware");
+
 
   app.use("/user", userRoutes);
   app.use("/auth", authRoutes);
   app.use("/admin", adminRoutes);
   app.use("/verify", verifyRoutes);
-  app.use("/api/excel", excelRoutes);
   app.use("/api/organisation", organisationRoutes);
-  app.use("/ebook", bookRoutes);
+ 
   app.use("/api/user", userRoutes);
+
+
+
+// ✅ PDF access protection
+app.use('/ebook/uploads/pdfs', (req, res, next) => {
+    const referer = req.get('Referer');
+    if (!referer || (!referer.includes('/ebook/secure-viewer/') && !referer.includes('/ebook/download/'))) {
+        return res.status(403).json({ 
+            error: 'Access denied',
+            message: 'Direct file access is not allowed. Please use the secure viewer.'
+        });
+    }
+    next();
+});
+
+
 
   // RTS Integration
   app.use("/RTS/public", express.static(path.join(__dirname, "RTS", "public")));
@@ -183,10 +292,6 @@ const configureRoutes = () => {
 
   app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "index.html"));
-  });
-
-  app.get("/ebook", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "ebook.html"));
   });
 
   app.get("/searchResult", (req, res) => {

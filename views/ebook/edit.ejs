@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit <%= pdf.title %> - ReadVault</title>
+    <link href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,300,400&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #8B5CF6;
+            --primary-dark: #7C3AED;
+            --primary-light: #A78BFA;
+            --secondary: #F59E0B;
+            --accent: #10B981;
+            --danger: #EF4444;
+            --dark: #0F172A;
+            --darker: #020617;
+            --light: #F8FAFC;
+            --gray-100: #F1F5F9;
+            --gray-200: #E2E8F0;
+            --gray-300: #CBD5E1;
+            --gray-400: #94A3B8;
+            --gray-500: #64748B;
+            --gray-600: #475569;
+            --gray-700: #334155;
+            --gray-800: #1E293B;
+            --gray-900: #0F172A;
+            
+            --gradient-primary: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+            --gradient-secondary: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+            --gradient-accent: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            --gradient-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+            --shadow: 0 8px 30px rgba(0,0,0,0.12);
+            --shadow-lg: 0 20px 50px rgba(0,0,0,0.15);
+            --shadow-xl: 0 25px 60px rgba(0,0,0,0.2);
+            
+            --radius: 16px;
+            --radius-lg: 24px;
+            --radius-xl: 32px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Satoshi', sans-serif;
+            background: var(--gradient-bg);
+            min-height: 100vh;
+            color: var(--gray-800);
+            line-height: 1.6;
+        }
+
+        .app {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Modern Header */
+        .header {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(40px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1.5rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--gradient-primary);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+            box-shadow: var(--shadow);
+        }
+
+        .logo-text {
+            font-size: 2rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #FFFFFF, #E2E8F0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Main Content */
+        .main {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Page Header */
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem 0;
+        }
+
+        .page-title {
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #FFFFFF, #CBD5E1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            line-height: 1.1;
+        }
+
+        .page-subtitle {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 400;
+        }
+
+        /* Edit Form */
+        .edit-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        @media (max-width: 968px) {
+            .edit-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .current-book {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            position: sticky;
+            top: 2rem;
+        }
+
+        .current-book-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .current-book-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-primary);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .current-book-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: white;
+        }
+
+        .book-preview {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .book-cover-preview {
+            width: 160px;
+            height: 220px;
+            border-radius: var(--radius);
+            overflow: hidden;
+            margin: 0 auto 1.5rem;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .book-cover-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .book-info-preview {
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .book-info-preview h3 {
+            color: white;
+            margin-bottom: 0.5rem;
+            font-size: 1.3rem;
+        }
+
+        /* Edit Form */
+        .edit-form-container {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: var(--radius-lg);
+            padding: 2.5rem;
+        }
+
+        .form-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-accent);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .form-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: white;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            color: white;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            font-size: 1rem;
+        }
+
+        .form-input, .form-textarea, .form-select {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius);
+            color: white;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .form-input::placeholder, .form-textarea::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 120px;
+            font-family: inherit;
+        }
+
+        /* Category Options */
+        .category-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .category-option {
+            position: relative;
+        }
+
+        .category-option input {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .category-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+            font-weight: 600;
+        }
+
+        .category-card:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .category-card.selected {
+            background: rgba(139, 92, 246, 0.2);
+            border-color: var(--primary);
+            box-shadow: var(--shadow);
+        }
+
+        .category-icon {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        /* File Inputs */
+        .file-input-container {
+            position: relative;
+            margin-bottom: 0.5rem;
+        }
+
+        .file-input {
+            padding: 1rem 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: var(--radius);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .file-input:hover {
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .file-input input[type="file"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 1rem 1.5rem;
+            border: none;
+            border-radius: var(--radius);
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .btn-full {
+            width: 100%;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        /* Alerts */
+        .alert {
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            margin-bottom: 2rem;
+            backdrop-filter: blur(20px);
+            border: 1px solid;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .alert-error {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: rgba(239, 68, 68, 0.3);
+            color: #FECACA;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+            
+            .page-title {
+                font-size: 2.5rem;
+            }
+            
+            .category-options {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-actions {
+                flex-direction: column;
+            }
+            
+            .current-book {
+                position: static;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main {
+                padding: 1rem;
+            }
+            
+            .edit-form-container {
+                padding: 1.5rem;
+            }
+            
+            .page-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <nav class="nav">
+                <!-- ✅ UPDATED: Logo link with basePath -->
+                <a href="<%= typeof basePath !== 'undefined' ? basePath + '/' : '/ebook/' %>" class="logo">
+                    <div class="logo-icon">RV</div>
+                    <div class="logo-text">ReadVault</div>
+                </a>
+                <!-- ✅ UPDATED: Back to uploads link with basePath -->
+                <a href="<%= typeof basePath !== 'undefined' ? basePath + '/upload' : '/ebook/upload' %>" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to Uploads
+                </a>
+            </nav>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Page Header -->
+            <section class="page-header">
+                <h1 class="page-title">Edit Book</h1>
+                <p class="page-subtitle">Update the details for your book</p>
+            </section>
+
+            <!-- Error Message -->
+            <% if (typeof error !== 'undefined' && error) { %>
+                <div class="alert alert-error">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <%= error %>
+                </div>
+            <% } %>
+
+            <!-- Edit Section -->
+            <section class="edit-section">
+                <!-- Current Book Preview -->
+                <div class="current-book">
+                    <div class="current-book-header">
+                        <div class="current-book-icon">
+                            <i class="fas fa-book-open"></i>
+                        </div>
+                        <h2 class="current-book-title">Current Book</h2>
+                    </div>
+
+                    <div class="book-preview">
+                        <div class="book-cover-preview">
+                            <% if (pdf.coverImage) { %>
+                                <!-- ✅ UPDATED: Cover image path with basePath -->
+                                <img src="<%= typeof basePath !== 'undefined' ? basePath + '/uploads/covers/' + pdf.coverImage : '/ebook/uploads/covers/' + pdf.coverImage %>" 
+                                     alt="<%= pdf.title %>"
+                                     onerror="this.style.display='none'; this.parentNode.innerHTML='<i class=\"fas fa-book\"></i>';">
+                            <% } else { %>
+                                <i class="fas fa-book"></i>
+                            <% } %>
+                        </div>
+                        <div class="book-info-preview">
+                            <h3 id="previewTitle"><%= pdf.title %></h3>
+                            <p><strong>Category:</strong> 
+                                <span id="previewCategory"><%= pdf.category === 'technical' ? 'Technical' : 'Non-Technical' %></span>
+                            </p>
+                            <p><strong>Rating:</strong> <span id="previewRating"><%= pdf.rating ? pdf.rating.toFixed(1) : 'N/A' %></span>/5</p>
+                            <% if (pdf.uploadDate) { %>
+                                <p><strong>Uploaded:</strong> <%= new Date(pdf.uploadDate).toLocaleDateString() %></p>
+                            <% } %>
+                            <% if (pdf.viewCount > 0) { %>
+                                <p><strong>Views:</strong> <%= pdf.viewCount %></p>
+                            <% } %>
+                            <% if (pdf.downloadCount > 0) { %>
+                                <p><strong>Downloads:</strong> <%= pdf.downloadCount %></p>
+                            <% } %>
+                        </div>
+                    </div>
+
+                    <div class="quick-actions">
+                        <!-- ✅ UPDATED: View book link with basePath -->
+                        <a href="<%= typeof basePath !== 'undefined' ? basePath + '/secure-viewer/' + pdf._id : '/ebook/secure-viewer/' + pdf._id %>" class="btn btn-secondary btn-full" style="margin-bottom: 0.75rem;">
+                            <i class="fas fa-eye"></i>
+                            View Book
+                        </a>
+                        <!-- ✅ UPDATED: Download link with basePath -->
+                        <a href="<%= typeof basePath !== 'undefined' ? basePath + '/download/' + pdf._id : '/ebook/download/' + pdf._id %>" class="btn btn-secondary btn-full">
+                            <i class="fas fa-download"></i>
+                            Download PDF
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Edit Form -->
+                <div class="edit-form-container">
+                    <div class="form-header">
+                        <div class="form-icon">
+                            <i class="fas fa-edit"></i>
+                        </div>
+                        <h2 class="form-title">Edit Details</h2>
+                    </div>
+
+                    <!-- ✅ UPDATED: Form action with basePath -->
+                    <form action="<%= typeof basePath !== 'undefined' ? basePath + '/edit/' + pdf._id : '/ebook/edit/' + pdf._id %>" method="POST" enctype="multipart/form-data" id="editForm">
+                        <div class="form-group">
+                            <label class="form-label">Book Title</label>
+                            <input type="text" name="title" class="form-input" value="<%= pdf.title %>" required
+                                   oninput="updatePreview('title', this.value)">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Description</label>
+                            <textarea name="description" class="form-textarea" placeholder="Enter book description"><%= pdf.description %></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Category</label>
+                            <div class="category-options">
+                                <label class="category-option">
+                                    <input type="radio" name="category" value="technical" <%= pdf.category === 'technical' ? 'checked' : '' %>
+                                           onchange="updatePreview('category', 'Technical')">
+                                    <div class="category-card <%= pdf.category === 'technical' ? 'selected' : '' %>">
+                                        <span class="category-icon"><i class="fas fa-laptop-code"></i></span>
+                                        Technical
+                                    </div>
+                                </label>
+                                <label class="category-option">
+                                    <input type="radio" name="category" value="non-technical" <%= pdf.category === 'non-technical' ? 'checked' : '' %>
+                                           onchange="updatePreview('category', 'Non-Technical')">
+                                    <div class="category-card <%= pdf.category === 'non-technical' ? 'selected' : '' %>">
+                                        <span class="category-icon"><i class="fas fa-pen-fancy"></i></span>
+                                        Non-Technical
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Rating</label>
+                            <select name="rating" class="form-select" onchange="updatePreview('rating', this.value + '/5')">
+                                <option value="5" <%= pdf.rating == 5 ? 'selected' : '' %>>⭐️⭐️⭐️⭐️⭐️ (5/5)</option>
+                                <option value="4.5" <%= pdf.rating == 4.5 ? 'selected' : '' %>>⭐️⭐️⭐️⭐️½ (4.5/5)</option>
+                                <option value="4" <%= pdf.rating == 4 ? 'selected' : '' %>>⭐️⭐️⭐️⭐️ (4/5)</option>
+                                <option value="3.5" <%= pdf.rating == 3.5 ? 'selected' : '' %>>⭐️⭐️⭐️½ (3.5/5)</option>
+                                <option value="3" <%= pdf.rating == 3 ? 'selected' : '' %>>⭐️⭐️⭐️ (3/5)</option>
+                                <option value="2.5" <%= pdf.rating == 2.5 ? 'selected' : '' %>>⭐️⭐️½ (2.5/5)</option>
+                                <option value="2" <%= pdf.rating == 2 ? 'selected' : '' %>>⭐️⭐️ (2/5)</option>
+                                <option value="1.5" <%= pdf.rating == 1.5 ? 'selected' : '' %>>⭐️½ (1.5/5)</option>
+                                <option value="1" <%= pdf.rating == 1 ? 'selected' : '' %>>⭐️ (1/5)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Tags (comma separated)</label>
+                            <input type="text" name="tags" class="form-input" 
+                                   value="<%= pdf.tags ? pdf.tags.join(', ') : '' %>" 
+                                   placeholder="programming, web, javascript">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Replace PDF File (Optional)</label>
+                            <div class="file-input-container">
+                                <div class="file-input">
+                                    <i class="fas fa-file-pdf"></i>
+                                    Choose New PDF
+                                    <input type="file" name="pdf" accept="application/pdf">
+                                </div>
+                            </div>
+                            <div class="file-info">
+                                <i class="fas fa-info-circle"></i>
+                                Current: <%= pdf.originalFilename || pdf.filename %>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Replace Cover Image (Optional)</label>
+                            <div class="file-input-container">
+                                <div class="file-input">
+                                    <i class="fas fa-image"></i>
+                                    Choose New Cover
+                                    <input type="file" name="coverImage" accept="image/*">
+                                </div>
+                            </div>
+                            <div class="file-info">
+                                <i class="fas fa-info-circle"></i>
+                                <%= pdf.coverImage ? 'Current image will be replaced' : 'No current cover image' %>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <!-- ✅ UPDATED: Cancel link with basePath -->
+                            <a href="<%= typeof basePath !== 'undefined' ? basePath + '/upload' : '/ebook/upload' %>" class="btn btn-secondary">
+                                <i class="fas fa-times"></i>
+                                Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i>
+                                Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // Category selection
+        document.querySelectorAll('.category-option input').forEach(radio => {
+            radio.addEventListener('change', function() {
+                document.querySelectorAll('.category-card').forEach(card => {
+                    card.classList.remove('selected');
+                });
+                this.closest('.category-option').querySelector('.category-card').classList.add('selected');
+            });
+        });
+
+        // File input enhancement
+        document.querySelectorAll('input[type="file"]').forEach(input => {
+            input.addEventListener('change', function(e) {
+                const container = this.closest('.file-input-container');
+                const fileInput = container.querySelector('.file-input');
+                const fileName = this.files[0]?.name || 'Choose File';
+                
+                fileInput.innerHTML = `
+                    <i class="fas fa-file"></i>
+                    ${fileName}
+                    <input type="file" name="${this.name}" accept="${this.accept}">
+                `;
+
+                // Add file size validation for PDF
+                if (this.name === 'pdf' && this.files[0]) {
+                    const fileSize = this.files[0].size;
+                    const maxSize = 50 * 1024 * 1024; // 50MB
+                    
+                    if (fileSize > maxSize) {
+                        alert('File size exceeds 50MB limit. Please choose a smaller file.');
+                        this.value = '';
+                        fileInput.innerHTML = `
+                            <i class="fas fa-file-pdf"></i>
+                            Choose New PDF
+                            <input type="file" name="pdf" accept="application/pdf">
+                        `;
+                    }
+                }
+
+                // Preview new cover image
+                if (this.name === 'coverImage' && this.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const preview = document.querySelector('.book-cover-preview');
+                        preview.innerHTML = `<img src="${e.target.result}" alt="New cover preview" style="width: 100%; height: 100%; object-fit: cover;">`;
+                    };
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+        });
+
+        // Form submission loading state
+        document.getElementById('editForm').addEventListener('submit', function(e) {
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            submitBtn.disabled = true;
+            
+            // Re-enable after 5 seconds (in case of error)
+            setTimeout(() => {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }, 5000);
+        });
+
+        // Real-time preview updates
+        function updatePreview(field, value) {
+            const previewElement = document.getElementById(`preview${field.charAt(0).toUpperCase() + field.slice(1)}`);
+            if (previewElement) {
+                previewElement.textContent = value;
+            }
+        }
+
+        // Auto-hide alerts after 5 seconds
+        setTimeout(() => {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                alert.style.opacity = '0';
+                alert.style.transition = 'opacity 0.5s ease';
+                setTimeout(() => alert.remove(), 500);
+            });
+        }, 5000);
+
+        // Reset form confirmation
+        document.getElementById('editForm').addEventListener('reset', function(e) {
+            if (!confirm('Are you sure you want to reset all changes?')) {
+                e.preventDefault();
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key) {
+                    case 's':
+                        e.preventDefault();
+                        document.getElementById('editForm').dispatchEvent(new Event('submit'));
+                        break;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
