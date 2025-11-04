@@ -1,0 +1,1368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReadVault - Modern Digital Library</title>
+    <link href="https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,300,400&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+:root {
+    /* White & Gray Scale */
+    --pure-white: #ffffff;
+    --white-95: #f8fafc;
+    --white-90: #f1f5f9;
+    --white-80: #e2e8f0;
+    --white-60: #cbd5e1;
+    
+    /* Text Colors */
+    --text-primary: #1e293b;
+    --text-secondary: #475569;
+    --text-muted: #64748b;
+    --text-light: #94a3b8;
+    
+    /* Background Gradients */
+    --gradient-bg: linear-gradient(135deg, #f4f0f0 0%, #f0f4f8 100%);
+    --gradient-card: linear-gradient(135deg, #efe9e9 0%, #d9dee3 100%);
+    --gradient-header: linear-gradient(135deg, #1e40af 0%, #2563eb 100%);
+    --gradient-accent: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+    --gradient-warning: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+    
+    /* Accent Colors */
+    --accent-green: #10b981;
+    --accent-red: #ef4444;
+    --accent-orange: #f59e0b;
+    --accent-purple: #8b5cf6;
+    --accent-pink: #ec4899;
+    
+    /* Modern Shadows */
+    --shadow-sm: 0 2px 12px rgba(0, 0, 0, 0.08);
+    --shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.15);
+    --shadow-xl: 0 25px 80px rgba(0, 0, 0, 0.2);
+    
+    --radius: 16px;
+    --radius-lg: 24px;
+    --radius-xl: 32px;
+    
+    /* Animations */
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Satoshi', sans-serif;
+    background: var(--gradient-bg);
+    min-height: 100vh;
+    color: var(--text-primary);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+.app {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Modern Glass Header */
+.header {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(40px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 1rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.nav {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+    flex-shrink: 0;
+}
+
+.logo-icon {
+    width: 40px;
+    height: 40px;
+    background: var(--gradient-header);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.25rem;
+    font-weight: 700;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+}
+
+.logo:hover .logo-icon {
+    transform: rotate(10deg) scale(1.1);
+}
+
+.logo-text {
+    font-size: 1.5rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, #1e40af, #2563eb);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.nav-actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+/* Main Content */
+.main {
+    flex: 1;
+    padding: 1.5rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* Modern Filter Section */
+.filter-section {
+    backdrop-filter: blur(20px);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.filter-tabs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.75rem;
+}
+
+.filter-tab {
+    padding: 1.25rem 1rem;
+    background: var(--white-95);
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    border-radius: var(--radius);
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1rem;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.filter-tab::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+    transition: left 0.6s;
+}
+
+.filter-tab:hover::before {
+    left: 100%;
+}
+
+.filter-tab:hover {
+    background: var(--white-90);
+    transform: translateY(-2px);
+    border-color: rgba(59, 130, 246, 0.3);
+    color: var(--text-primary);
+}
+
+.filter-tab.active {
+    background: var(--gradient-header);
+    border-color: transparent;
+    color: white;
+    box-shadow: var(--shadow);
+}
+
+.filter-count {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 0.25rem 0.5rem;
+    border-radius: 10px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-left: 0.25rem;
+    color: var(--text-primary);
+}
+
+.filter-tab.active .filter-count {
+    background: rgba(255, 255, 255, 0.3);
+    color: white;
+}
+
+/* Modern Search Section */
+.search-section {
+    backdrop-filter: blur(20px);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.search-container {
+    position: relative;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.search-input {
+    width: 100%;
+    padding: 1.25rem 1.75rem 1.25rem 3rem;
+    background: var(--white-95);
+    border: 2px solid rgba(0, 0, 0, 0.15);
+    border-radius: 50px;
+    color: var(--text-primary);
+    font-size: 1rem;
+    font-weight: 500;
+    transition: var(--transition);
+}
+
+.search-input::placeholder {
+    color: var(--text-muted);
+}
+
+.search-input:focus {
+    outline: none;
+    background: var(--pure-white);
+    border-color: #2563eb;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+    transform: scale(1.02);
+}
+
+.search-icon {
+    position: absolute;
+    left: 1.25rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    transition: var(--transition);
+}
+
+.search-input:focus + .search-icon {
+    color: #2563eb;
+    transform: translateY(-50%) scale(1.1);
+}
+
+/* Modern Books Section */
+.books-section {
+    margin-bottom: 3rem;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.section-title {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.section-title i {
+    background: var(--gradient-header);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.results-info {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    font-weight: 500;
+    background: var(--white-95);
+    padding: 0.5rem 1rem;
+    border-radius: 50px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Modern Books Grid - Responsive Cards */
+.books-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+/* UPDATED: Modern Book Card - Beautiful Purple Gradient */
+.book-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: var(--transition);
+    position: relative;
+    box-shadow: var(--shadow);
+}
+
+.book-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-header);
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+}
+
+.book-card:hover::before {
+    transform: scaleX(1);
+}
+
+.book-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    border-color: rgba(255, 255, 255, 0.25);
+    box-shadow: var(--shadow-lg);
+}
+
+/* UPDATED: Book Cover Container */
+.book-cover-container {
+    position: relative;
+    height: 180px;
+    overflow: hidden;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.9), rgba(118, 75, 162, 0.9));
+}
+
+.book-cover {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.book-card:hover .book-cover {
+    transform: scale(1.15);
+}
+
+.book-cover-placeholder {
+    width: 100%;
+    height: 100%;
+    background: var(--gradient-header);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 2.5rem;
+}
+
+.book-badges {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    right: 0.75rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.category-badge {
+    padding: 0.35rem 0.7rem;
+    border-radius: 14px;
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: var(--shadow-sm);
+    color: white;
+}
+
+.category-badge.technical {
+    background: #2563eb;
+}
+
+.category-badge.non-technical {
+    background: #10b981;
+}
+
+.category-badge.other {
+    background: #8b5cf6;
+}
+
+.rating-badge {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 0.35rem 0.6rem;
+    border-radius: 14px;
+    font-weight: 800;
+    color: #2563eb;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.7rem;
+    box-shadow: var(--shadow);
+}
+
+.book-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0.7) 0%,
+        transparent 40%,
+        transparent 60%,
+        rgba(0, 0, 0, 0.5) 100%
+    );
+    opacity: 0;
+    transition: var(--transition);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 1.25rem;
+}
+
+.book-card:hover .book-overlay {
+    opacity: 1;
+}
+
+.quick-actions {
+    display: flex;
+    gap: 0.5rem;
+    transform: translateY(20px);
+    transition: transform 0.3s ease;
+    justify-content: center;
+    width: 100%;
+}
+
+.book-card:hover .quick-actions {
+    transform: translateY(0);
+}
+
+.action-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: var(--transition);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 0.9rem;
+    color: white;
+    box-shadow: var(--shadow);
+}
+
+.view-btn {
+    background: var(--gradient-accent);
+}
+
+.action-btn:hover {
+    transform: scale(1.15);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+}
+
+/* UPDATED: Book Content - Light Text for Gradient Background */
+.book-content {
+    padding: 1.25rem;
+}
+
+.book-title {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: #f7fafc;
+    margin-bottom: 0.75rem;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.book-description {
+    color: #e2e8f0;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.book-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+    padding: 0.75rem 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #cbd5e0;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.book-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+}
+
+/* Modern Buttons */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem 1.5rem;
+    border: none;
+    border-radius: var(--radius);
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 0.9rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.6s;
+}
+
+.btn:hover::before {
+    left: 100%;
+}
+
+.btn-primary {
+    background: var(--gradient-header);
+    color: white;
+    box-shadow: var(--shadow);
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn-secondary {
+    background: var(--white-95);
+    color: var(--text-primary);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.btn-secondary:hover {
+    background: var(--white-90);
+    transform: translateY(-3px);
+}
+
+.btn-success {
+    background: var(--gradient-accent);
+    color: white;
+}
+
+.btn-danger {
+    background: var(--accent-red);
+    color: white;
+}
+
+.btn-full {
+    width: 100%;
+}
+
+.btn-sm {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.85rem;
+}
+
+/* Buttons in Cards - Smaller */
+.book-actions .btn {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.85rem;
+}
+
+/* Modern Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 3rem;
+    flex-wrap: wrap;
+}
+
+.pagination-btn {
+    padding: 1rem 1.5rem;
+    background: var(--white-95);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: var(--radius);
+    color: var(--text-primary);
+    text-decoration: none;
+    font-weight: 600;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.pagination-btn:hover:not(.disabled) {
+    background: var(--white-90);
+    transform: translateY(-2px);
+    border-color: rgba(59, 130, 246, 0.3);
+}
+
+.pagination-btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: var(--white-95);
+}
+
+.pagination-info {
+    color: var(--text-secondary);
+    font-weight: 500;
+    background: var(--white-95);
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+/* Modern Empty State */
+.empty-state {
+    text-align: center;
+    padding: 5rem 2rem;
+    background: var(--pure-white);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: var(--radius-lg);
+    margin: 2rem 0;
+    grid-column: 1 / -1;
+    box-shadow: var(--shadow);
+}
+
+.empty-icon {
+    font-size: 4rem;
+    color: var(--text-light);
+    margin-bottom: 1.5rem;
+    background: var(--gradient-header);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.empty-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+}
+
+.empty-description {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    max-width: 500px;
+    margin: 0 auto 2rem;
+    line-height: 1.6;
+}
+
+/* Modern Footer */
+.footer {
+    background: var(--white-95);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 3rem 0 2rem;
+    margin-top: auto;
+}
+
+.footer-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    text-align: center;
+}
+
+.footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.footer-link {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: var(--transition);
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius);
+}
+
+.footer-link:hover {
+    color: var(--text-primary);
+    background: var(--white-90);
+}
+
+.footer-copyright {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+/* Loading States */
+.loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    color: var(--text-muted);
+}
+
+.loading i {
+    margin-right: 0.75rem;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--white-90);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #2563eb;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #1d4ed8;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .books-grid {
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .nav {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    .logo {
+        justify-content: center;
+    }
+    
+    .filter-tabs {
+        grid-template-columns: 1fr;
+    }
+    
+    .books-grid {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+    
+    .section-header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    .book-actions {
+        grid-template-columns: 1fr;
+    }
+    
+    .pagination {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .pagination-btn, .pagination-info {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+    }
+    
+    .footer-links {
+        flex-direction: column;
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .main {
+        padding: 1rem;
+    }
+    
+    .filter-section, .search-section {
+        padding: 1rem;
+    }
+    
+    .book-content {
+        padding: 1rem;
+    }
+    
+    .book-cover-container {
+        height: 160px;
+    }
+    
+    .section-title {
+        font-size: 1.5rem;
+    }
+    
+    .empty-state {
+        padding: 3rem 1.5rem;
+    }
+    
+    .empty-title {
+        font-size: 1.75rem;
+    }
+    
+    .empty-icon {
+        font-size: 3.5rem;
+    }
+}
+
+/* Mobile-first adjustments for very small screens */
+@media (max-width: 360px) {
+    .main {
+        padding: 0.75rem;
+    }
+    
+    .filter-tab {
+        padding: 1rem 0.75rem;
+        font-size: 0.9rem;
+    }
+    
+    .search-input {
+        padding: 1rem 1.5rem 1rem 2.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .search-icon {
+        left: 1rem;
+    }
+    
+    .book-cover-container {
+        height: 140px;
+    }
+    
+    .book-content {
+        padding: 0.75rem;
+    }
+    
+    .btn {
+        padding: 0.75rem 1.25rem;
+        font-size: 0.85rem;
+    }
+}
+
+/* Modern Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.book-card {
+    animation: fadeInUp 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+/* Touch-friendly improvements for mobile */
+@media (hover: none) {
+    .book-card:hover {
+        transform: none;
+    }
+    
+    .book-card:hover .book-overlay {
+        opacity: 1;
+    }
+    
+    .filter-tab:hover {
+        transform: none;
+    }
+    
+    .btn:hover {
+        transform: none;
+    }
+    
+    .action-btn:hover {
+        transform: none;
+    }
+}
+
+/* High DPI screen optimizations */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .book-cover {
+        image-rendering: -webkit-optimize-contrast;
+    }
+}
+
+/* Print styles */
+@media print {
+    .header, .footer, .filter-section, .search-section, .book-actions {
+        display: none;
+    }
+    
+    .books-grid {
+        display: block;
+    }
+    
+    .book-card {
+        break-inside: avoid;
+        margin-bottom: 1rem;
+    }
+}
+</style>
+
+</head>
+<body>
+    <div class="app">
+        <!-- Modern Glass Header -->
+        <header class="header">
+            <nav class="nav">
+                <!-- ✅ UPDATED: Logo link with basePath -->
+                <a href="<%= typeof basePath !== 'undefined' ? basePath : '/ebook' %>" class="logo">
+                   <img src="../assets/final_logo.svg" alt="RID Bharat Logo" onerror="this.src='https:/via.placeholder.com/260x70/083d5d/FFFFFF?text=RID+Bharat+Logo'" style="max-width: 100%; height: auto;">
+                    
+                </a>
+                <div class="nav-actions">
+                    <% if (typeof user !== 'undefined' && user) { %>
+                        <!-- ✅ UPDATED: Upload link with basePath -->
+                        <a href="<%= typeof basePath !== 'undefined' ? basePath + '/upload' : '/ebook/upload' %>" class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            Add New Book
+                        </a>
+                    <% } else { %>
+                        <!-- ✅ UPDATED: Login link with basePath -->
+                        <a href="<%= typeof basePath !== 'undefined' ? basePath + '/login?redirect=' + encodeURIComponent(basePath + '/upload') : '/ebook/login?redirect=/ebook/upload' %>" class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            Add New Book
+                        </a>
+                    <% } %>
+                </div>
+            </nav>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Modern Filter Section -->
+            <section class="filter-section">
+                <div class="filter-tabs">
+                    <!-- ✅ UPDATED: Filter links with basePath -->
+                    <a href="<%= typeof basePath !== 'undefined' ? basePath + '/?filter=all&search=' + searchQuery + '&sort=' + sort : '/ebook/?filter=all&search=' + searchQuery + '&sort=' + sort %>" 
+                       class="filter-tab <%= currentFilter === 'all' ? 'active' : '' %>">
+                        <i class="fas fa-th-large"></i>
+                        All Books
+                        <span class="filter-count"><%= counts.all %></span>
+                    </a>
+                    <a href="<%= typeof basePath !== 'undefined' ? basePath + '/?filter=technical&search=' + searchQuery + '&sort=' + sort : '/ebook/?filter=technical&search=' + searchQuery + '&sort=' + sort %>" 
+                       class="filter-tab <%= currentFilter === 'technical' ? 'active' : '' %>">
+                        <i class="fas fa-laptop-code"></i>
+                        Technical
+                        <span class="filter-count"><%= counts.technical %></span>
+                    </a>
+                    <a href="<%= typeof basePath !== 'undefined' ? basePath + '/?filter=non-technical&search=' + searchQuery + '&sort=' + sort : '/ebook/?filter=non-technical&search=' + searchQuery + '&sort=' + sort %>" 
+                       class="filter-tab <%= currentFilter === 'non-technical' ? 'active' : '' %>">
+                        <i class="fas fa-pen-fancy"></i>
+                        Non-Technical
+                        <span class="filter-count"><%= counts.nonTechnical %></span>
+                    </a>
+                    <a href="<%= typeof basePath !== 'undefined' ? basePath + '/?filter=other&search=' + searchQuery + '&sort=' + sort : '/ebook/?filter=other&search=' + searchQuery + '&sort=' + sort %>" 
+                       class="filter-tab <%= currentFilter === 'other' ? 'active' : '' %>">
+                        <i class="fas fa-book"></i>
+                        Other
+                        <span class="filter-count"><%= counts.other %></span>
+                    </a>
+                </div>
+            </section>
+
+            <!-- Modern Search Section -->
+            <section class="search-section">
+                <!-- ✅ UPDATED: Search form with basePath -->
+                <form method="GET" action="<%= typeof basePath !== 'undefined' ? basePath + '/' : '/ebook/' %>" class="search-container">
+                    <input type="text" name="search" class="search-input" 
+                           placeholder="Search books by title, description, or tags..."
+                           value="<%= typeof searchQuery !== 'undefined' ? searchQuery : '' %>">
+                    <input type="hidden" name="filter" value="<%= currentFilter %>">
+                    <input type="hidden" name="sort" value="<%= sort %>">
+                    <div class="search-icon">
+                        <i class="fas fa-search"></i>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Modern Books Section -->
+            <section class="books-section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <% if (currentFilter === 'all') { %>
+                            <i class="fas fa-th-large"></i> All Books
+                        <% } else if (currentFilter === 'technical') { %>
+                            <i class="fas fa-laptop-code"></i> Technical Books
+                        <% } else if (currentFilter === 'non-technical') { %>
+                            <i class="fas fa-pen-fancy"></i> Non-Technical Books
+                        <% } else { %>
+                            <i class="fas fa-book"></i> Other Books
+                        <% } %>
+                        
+                        <% if (searchQuery) { %>
+                            <span style="color: var(--secondary-blue); font-weight: 400;">for "<%= searchQuery %>"</span>
+                        <% } %>
+                    </h2>
+                    <div class="results-info">
+                        <i class="fas fa-book-open"></i>
+                        <%= pdfs.length %> books found
+                        <% if (totalPages > 1) { %>
+                            • Page <%= currentPage %> of <%= totalPages %>
+                        <% } %>
+                    </div>
+                </div>
+
+                <!-- Modern Books Grid -->
+                <div class="books-grid">
+                    <% if (pdfs.length === 0) { %>
+                        <div class="empty-state">
+                            <div class="empty-icon">
+                                <i class="fas fa-book-open"></i>
+                            </div>
+                            <h3 class="empty-title">No Books Found</h3>
+                            <p class="empty-description">
+                                <% if (currentFilter !== 'all') { %>
+                                    We couldn't find any books in the 
+                                    <strong>
+                                        <%= currentFilter === 'technical' ? 'Technical' : 
+                                            currentFilter === 'non-technical' ? 'Non-Technical' : 'Other' %>
+                                    </strong> 
+                                    category.
+                                    <% if (searchQuery) { %>
+                                        matching "<strong><%= searchQuery %></strong>".
+                                    <% } %>
+                                <% } else if (searchQuery) { %>
+                                    No results found for "<strong><%= searchQuery %></strong>".
+                                <% } else { %>
+                                    No books available in your library yet.
+                                <% } %>
+                            </p>
+                           
+                            <!-- ✅ UPDATED: Browse link with basePath -->
+                            <a href="<%= typeof basePath !== 'undefined' ? basePath + '/' : '/ebook/' %>" class="btn btn-secondary">
+                                <i class="fas fa-book-open"></i>
+                                Browse All Books
+                            </a>
+                        </div>
+                    <% } else { %>
+                        <% pdfs.forEach(pdf => { %>
+                            <div class="book-card">
+                                <div class="book-cover-container">
+                                    <!-- Modern Cover Image Display -->
+                                    <% if (pdf.coverImage) { %>
+                                        <!-- ✅ UPDATED: Cover image path with basePath -->
+                                        <img src="<%= typeof basePath !== 'undefined' ? basePath + '/uploads/covers/' + pdf.coverImage : '/ebook/uploads/covers/' + pdf.coverImage %>" 
+                                             alt="<%= pdf.title %>" 
+                                             class="book-cover"
+                                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                        <div class="book-cover-placeholder" style="display: none;">
+                                            <i class="fas fa-book"></i>
+                                        </div>
+                                    <% } else { %>
+                                        <div class="book-cover-placeholder">
+                                            <i class="fas fa-book"></i>
+                                        </div>
+                                    <% } %>
+                                    
+                                    <div class="book-badges">
+                                        <div class="category-badge <%= pdf.category %>">
+                                            <% if (pdf.category === 'technical') { %>
+                                                <i class="fas fa-laptop-code"></i> TECH
+                                            <% } else if (pdf.category === 'non-technical') { %>
+                                                <i class="fas fa-pen-fancy"></i> FICTION
+                                            <% } else { %>
+                                                <i class="fas fa-book"></i> OTHER
+                                            <% } %>
+                                        </div>
+                                        <div class="rating-badge">
+                                            <i class="fas fa-star"></i>
+                                            <span><%= pdf.rating ? pdf.rating.toFixed(1) : '4.0' %></span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="book-overlay">
+                                        <div class="quick-actions">
+                                            <!-- ✅ UPDATED: Secure viewer link with basePath -->
+                                            <a href="<%= typeof basePath !== 'undefined' ? basePath + '/secure-viewer/' + pdf._id : '/ebook/secure-viewer/' + pdf._id %>" class="action-btn view-btn" title="Secure Read">
+                                                <i class="fas fa-shield-alt"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="book-content">
+                                    <h3 class="book-title"><%= pdf.title %></h3>
+                                    
+                                    <p class="book-description">
+                                        <%= pdf.description && pdf.description.length > 120 ? 
+                                            pdf.description.substring(0, 120) + '...' : 
+                                            (pdf.description || 'No description available for this book.') %>
+                                    </p>
+                                    
+                                    <div class="book-meta">
+                                        <div class="meta-item">
+                                            <i class="fas fa-calendar"></i>
+                                            <span><%= new Date(pdf.uploadDate).toLocaleDateString() %></span>
+                                        </div>
+                                        <% if (pdf.viewCount > 0) { %>
+                                        <div class="meta-item">
+                                            <i class="fas fa-eye"></i>
+                                            <span><%= pdf.viewCount %></span>
+                                        </div>
+                                        <% } %>
+                                    </div>
+                                    
+                                    <div class="book-actions">
+                                        <!-- ✅ UPDATED: Secure read link with basePath -->
+                                        <a href="<%= typeof basePath !== 'undefined' ? basePath + '/secure-viewer/' + pdf._id : '/ebook/secure-viewer/' + pdf._id %>" class="btn btn-success btn-sm btn-full">
+                                            <i class="fas fa-shield-alt"></i>
+                                            Secure Read
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }) %>
+                    <% } %>
+                </div>
+
+                <!-- Modern Pagination -->
+                <% if (totalPages > 1) { %>
+                <div class="pagination">
+                    <% if (hasPrevPage) { %>
+                        <!-- ✅ UPDATED: Previous page link with basePath -->
+                        <a href="<%= typeof basePath !== 'undefined' ? basePath + '/?page=' + (currentPage - 1) + '&filter=' + currentFilter + '&search=' + searchQuery + '&sort=' + sort : '/ebook/?page=' + (currentPage - 1) + '&filter=' + currentFilter + '&search=' + searchQuery + '&sort=' + sort %>" 
+                           class="pagination-btn">
+                            <i class="fas fa-chevron-left"></i>
+                            Previous
+                        </a>
+                    <% } else { %>
+                        <span class="pagination-btn disabled">
+                            <i class="fas fa-chevron-left"></i>
+                            Previous
+                        </span>
+                    <% } %>
+
+                    <span class="pagination-info">
+                        Page <%= currentPage %> of <%= totalPages %>
+                    </span>
+
+                    <% if (hasNextPage) { %>
+                        <!-- ✅ UPDATED: Next page link with basePath -->
+                        <a href="<%= typeof basePath !== 'undefined' ? basePath + '/?page=' + (currentPage + 1) + '&filter=' + currentFilter + '&search=' + searchQuery + '&sort=' + sort : '/ebook/?page=' + (currentPage + 1) + '&filter=' + currentFilter + '&search=' + searchQuery + '&sort=' + sort %>" 
+                           class="pagination-btn">
+                            Next
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    <% } else { %>
+                        <span class="pagination-btn disabled">
+                            Next
+                            <i class="fas fa-chevron-right"></i>
+                        </span>
+                    <% } %>
+                </div>
+                <% } %>
+            </section>
+        </main>
+
+        <!-- Modern Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="footer-links">
+                    <!-- ✅ UPDATED: Footer links with basePath -->
+                    <a href="<%= typeof basePath !== 'undefined' ? basePath + '/' : '/ebook/' %>" class="footer-link">Home</a>
+                    <a href="<%= typeof basePath !== 'undefined' ? basePath + '/upload' : '/ebook/upload' %>" class="footer-link">Upload</a>
+                    <a href="<%= typeof basePath !== 'undefined' ? basePath + '/api/stats' : '/ebook/api/stats' %>" class="footer-link">Statistics</a>
+                    <a href="<%= typeof basePath !== 'undefined' ? basePath + '/health' : '/ebook/health' %>" class="footer-link">Health</a>
+                </div>
+                <div class="footer-copyright">
+                    &copy; 2024 ReadVault. Made with ❤️ for book lovers.
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Enhanced auto-search with modern effects
+        let searchTimeout;
+        const searchInput = document.querySelector('.search-input');
+        const searchIcon = document.querySelector('.search-icon');
+        
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                
+                const originalIcon = searchIcon.innerHTML;
+                searchIcon.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+                
+                searchTimeout = setTimeout(() => {
+                    searchIcon.innerHTML = originalIcon;
+                    this.form.submit();
+                }, 800);
+            });
+
+            // Add focus effect
+            searchInput.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'scale(1.02)';
+            });
+
+            searchInput.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'scale(1)';
+            });
+        }
+
+        // Modern animations for book cards with staggered delay
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }, index * 100);
+                }
+            });
+        }, observerOptions);
+
+        // Observe all book cards with staggered animation
+        document.querySelectorAll('.book-card').forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(40px)';
+            card.style.transition = 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+            card.style.transitionDelay = `${index * 0.1}s`;
+            observer.observe(card);
+        });
+
+        // Modern hover effects for filter tabs
+        document.querySelectorAll('.filter-tab').forEach(tab => {
+            tab.addEventListener('mouseenter', function() {
+                if (!this.classList.contains('active')) {
+                    this.style.background = 'rgba(255, 255, 255, 0.12)';
+                }
+            });
+            
+            tab.addEventListener('mouseleave', function() {
+                if (!this.classList.contains('active')) {
+                    this.style.background = 'rgba(255, 255, 255, 0.08)';
+                }
+            });
+        });
+
+        // Modern keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === '/' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+                e.preventDefault();
+                searchInput?.focus();
+            }
+        });
+
+        // Enhanced image error handling for covers
+        document.querySelectorAll('.book-cover').forEach(img => {
+            img.addEventListener('error', function() {
+                this.style.display = 'none';
+                const placeholder = this.nextElementSibling;
+                if (placeholder && placeholder.classList.contains('book-cover-placeholder')) {
+                    placeholder.style.display = 'flex';
+                }
+            });
+        });
+
+        // Modern tooltips
+        document.querySelectorAll('.book-title, .book-description').forEach(element => {
+            if (element.scrollWidth > element.clientWidth) {
+                element.setAttribute('title', element.textContent);
+            }
+        });
+
+        // Add parallax effect to hero section
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const hero = document.querySelector('.hero');
+            if (hero) {
+                hero.style.transform = `translateY(${scrolled * 0.5}px)`;
+            }
+        });
+
+        // Initialize modern features
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('🎨 Modern dashboard initialized');
+        });
+    </script>
+</body>
+</html>
